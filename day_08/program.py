@@ -1,14 +1,13 @@
 # Day 8: Two-Factor Authentication
 
 import re
-
 import numpy as np
 
 PIXEL_OFF = 0
 PIXEL_ON = 1
 
-SCREEN_WIDTH = 7
-SCREEN_HEIGHT = 3
+SCREEN_WIDTH = 50
+SCREEN_HEIGHT = 6
 
 
 def rect(screen, columns, rows):
@@ -36,6 +35,7 @@ def main():
         else:
             rotate_row(screen, num1, num2)
 
+    print(np.count_nonzero(screen))
     print(screen)
 
 
