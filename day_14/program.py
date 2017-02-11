@@ -1,0 +1,54 @@
+# Day 14: One-Time Pad
+
+import re
+import hashlib
+
+REGEX_MATCH_3_TIMES = r"([a-f0-9])\1{2}"
+REGEX_MATCH_5_TIMES = r"([a-f0-9])\1{4}"
+
+
+def generate_hash(salt, index):
+    m = hashlib.md5()
+    m.update(''.join((salt, index)).encode('utf-8'))
+
+    return int(index), m.hexdigest()
+
+
+def generate_next_n_hash(salt, n):
+    next_n_hash = [generate_hash(salt, str(index)) for index in range(n)]
+
+    next_index = n
+    while True:
+        yield next_n_hash
+
+        next_n_hash.pop(0)
+        next_n_hash.append(generate_hash(salt, str(next_index)))
+        next_index += 1
+
+
+def find_all(regex, hash_str):
+    return re.findall(regex, hash_str)
+
+
+def main(salt):
+    keys_found = 0
+
+    for hashes in generate_next_n_hash(salt, 1 + 1000):
+        index_0, hash_0 = hashes[0]
+        matches_0 = find_all(REGEX_MATCH_3_TIMES, hash_0)
+
+        if matches_0:
+            for index_n, hash_n in hashes[1:]:
+                matches_n = find_all(REGEX_MATCH_5_TIMES, hash_n)
+
+                if matches_0[0] in matches_n:
+                    keys_found += 1
+
+                    if keys_found == 64:
+                        print(index_0)
+                        exit()
+
+                    break
+
+
+main('ihaygndm')
